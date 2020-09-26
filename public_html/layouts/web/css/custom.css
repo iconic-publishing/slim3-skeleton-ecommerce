@@ -1,0 +1,21 @@
+/* CSS Document */
+
+.padding-xs {
+	padding: 40px 0
+}
+
+.red {
+	color: #B91316
+}
+
+select {
+	-webkit-appearance:none; /* remove the strong OSX influence from Webkit */
+}
+
+.softhide {
+	display: none;
+}
+
+:disabled {
+	cursor: not-allowed;
+}
