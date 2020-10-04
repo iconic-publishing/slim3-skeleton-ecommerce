@@ -13,7 +13,7 @@ $app->group('/register', function() {
 });
 
 $app->group('/activatation', function() {
-    $this->get('', AuthActivateController::class . ':activate')->setName('activate');
+    $this->get('', AuthActivateController::class . ':getActivate')->setName('getActivate');
 });
 
 $app->group('/login', function() {
@@ -21,7 +21,7 @@ $app->group('/login', function() {
     $this->post('', AuthLoginController::class . ':postLogin')->setName('postLogin');
 });
 
-$app->get('/logout', AuthLogoutController::class . ':logout')->setName('logout');
+$app->get('/logout', AuthLogoutController::class . ':getLogout')->setName('getLogout');
 
 $app->group('/recover-password', function() {
     $this->get('', AuthRecoverPasswordController::class . ':getRecoverPassword')->setName('getRecoverPassword');

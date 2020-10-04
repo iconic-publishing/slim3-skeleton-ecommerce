@@ -22,7 +22,7 @@ class Customer extends Model {
 	public function user() {
 		return $this->belongsTo(User::class, 'user_id');
 	}
-	
+
 	public function getFirstName() {
 		if($this->first_name) {
 			return $this->first_name;

@@ -3,6 +3,7 @@
 namespace Base\Controllers\Auth;
 
 use Base\Helpers\Filter;
+use ReCaptcha\ReCaptcha;
 use Base\Helpers\Session;
 use Base\Models\User\User;
 use Base\Constructor\BaseConstructor;
@@ -16,54 +17,63 @@ class AuthLoginController extends BaseConstructor {
     }
 
     public function postLogin(ServerRequestInterface $request, ResponseInterface $response) {
-        $identifier = $request->getParam('email_or_username');
-        $email_address = $request->getParam('email_address');
-        $password = $request->getParam('password');
+        $ip = Filter::ip();
 
-        $user = User::where(function($query) use ($identifier) {
-            return $query->where('email_address', $identifier)->orWhere('username', $identifier);
-        })->first();
+        $recaptcha = new ReCaptcha($this->config->get('recaptcha.invisible.secretKey'));
+        $resp = $recaptcha->setExpectedHostname($_SERVER['SERVER_NAME'])->verify($request->getParam('g-recaptcha-response', $ip));
 
-        if($user->recover_hash) {
-            $this->flash->addMessage('warning', $this->config->get('messages.login.passwordReset'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+        if($resp->isSuccess()) {
+            $identifier = $request->getParam('email_or_username');
+            $email_address = $request->getParam('email_address');
+            $password = $request->getParam('password');
 
-        if(!$user || !$this->hash->passwordCheck($password, $user->password)) {
-            $this->flash->addMessage('error', $this->config->get('messages.login.notUser'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+            $user = User::where(function($query) use ($identifier) {
+                return $query->where('email_address', $identifier)->orWhere('username', $identifier);
+            })->first();
 
-        if(!$user->active) {
-            $this->flash->addMessage('warning', $this->config->get('messages.login.notActive'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+            if($user->recover_hash) {
+                $this->flash->addMessage('warning', $this->config->get('messages.login.passwordReset'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
+            }
 
-        if($user->locked) {
-            $this->flash->addMessage('warning', $this->config->get('messages.login.locked'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+            if(!$user || !$this->hash->passwordCheck($password, $user->password)) {
+                $this->flash->addMessage('error', $this->config->get('messages.login.notUser'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
+            }
 
-        if($user && $this->hash->passwordCheck($password, $user->password)) {
-            Session::put('user', $user->id);
+            if(!$user->active) {
+                $this->flash->addMessage('warning', $this->config->get('messages.login.notActive'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
+            }
 
-            $size = $this->config->get('auth.token');
-            $token = $this->hash->hashed($size);
-            $ip = Filter::ip();
+            if($user->locked) {
+                $this->flash->addMessage('warning', $this->config->get('messages.login.locked'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
+            }
 
-            $user->createLoginToken($token);
-            $user->createLoginIp($ip);
-            $user->createLoginTime();
+            if($user && $this->hash->passwordCheck($password, $user->password)) {
+                Session::put('user', $user->id);
 
-            if($this->permission->administratorGroup() || $this->permission->adminGroup()) {
-                return $response->withRedirect($this->router->pathFor('admin', compact('token')));
+                $size = $this->config->get('auth.token');
+                $token = $this->hash->hashed($size);
+
+                $user->createLoginToken($token);
+                $user->createLoginIp($ip);
+                $user->createLoginTime();
+
+                if($this->permission->administratorGroup() || $this->permission->adminGroup()) {
+                    return $response->withRedirect($this->router->pathFor('admin', compact('token')));
+                } else {
+                    return $response->withRedirect($this->router->pathFor('member', compact('token')));
+                }
             } else {
-                return $response->withRedirect($this->router->pathFor('member', compact('token')));
+                $this->flash->addMessage('warning', $this->config->get('messages.login.notActive'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
             }
         } else {
-            $this->flash->addMessage('warning', $this->config->get('messages.login.notActive'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+			$this->flash->addMessage('error', $this->config->get('messages.recaptcha.error'));
+			return $response->withRedirect($this->router->pathFor('getLogin'));
+		}
     }
 
 }

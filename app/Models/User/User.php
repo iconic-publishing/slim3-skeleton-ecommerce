@@ -4,6 +4,8 @@ namespace Base\Models\User;
 
 use Base\Models\User\Role;
 use Base\Models\Admin\Admin;
+use Base\Models\Order\Order;
+use Base\Models\Customer\Address;
 use Base\Models\Customer\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,6 +41,14 @@ class User extends Model {
     public function customer() {
 		return $this->hasOne(Customer::class, 'user_id');
 	}
+
+	public function address() {
+		return $this->hasOne(Address::class, 'user_id');
+	}
+
+	public function orders() {
+        return $this->hasMany(Order::class, 'user_id');
+    }
 
 	public function admin() {
 		return $this->hasOne(Admin::class, 'user_id');

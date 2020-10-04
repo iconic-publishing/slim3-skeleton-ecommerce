@@ -15,7 +15,9 @@ use Slim\Flash\Messages;
 use Base\Helpers\Permission;
 use Base\Services\Twilio\Sms;
 use Slim\Views\TwigExtension;
-use Base\Validation\Validator;
+use Base\Basket\BasketSession;
+use Base\Models\Product\Product;
+use Base\Storage\SessionStorage;
 use Base\Services\PHPMailer\Email;
 use Illuminate\Pagination\Paginator;
 use Base\Services\Mail\Mailer\Mailer;
@@ -29,7 +31,6 @@ use Base\Middleware\CsrfStatusMiddleware;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-//session_cache_limiter(getenv('SESSION_CACHE_LIMITER'));
 session_start();
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -83,6 +84,7 @@ $container['view'] = function ($container) {
     $view->getEnvironment()->addGlobal('config', $container['config']);
     $view->getEnvironment()->addGlobal('auth', $container['auth']);
     $view->getEnvironment()->addGlobal('permission', $container['permission']);
+    $view->getEnvironment()->addGlobal('basket', $container['basket']);
     $view->getEnvironment()->addGlobal('flash', $container['flash']);
     $view->getEnvironment()->addGlobal('select', $container['select']);
 
@@ -115,6 +117,21 @@ $container['permission'] = function ($container) {
     return new Permission($container);
 };
 
+$container['basket'] = function ($container) {
+    return new BasketSession(
+		$container['storage'], 
+		$container['product']
+	);
+};
+
+$container['storage'] = function ($container) {
+	return new SessionStorage('cart');
+};
+
+$container['product'] = function ($container) {
+    return new Product;
+};
+
 $container['flash'] = function ($container) {
     return new Messages;
 };
@@ -125,10 +142,6 @@ $container['select'] = function ($container) {
 
 $container['hash'] = function ($container) {
     return new Hash($container);
-};
-
-$container['validator'] = function ($container) {
-    return new Validator;
 };
 
 $container['mail'] = function ($container) {

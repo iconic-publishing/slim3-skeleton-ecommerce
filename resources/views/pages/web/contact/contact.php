@@ -1,5 +1,9 @@
 {% extends 'layouts/web-layout.php' %}
 
+{% block scripts_recaptcha %}
+{% include 'pages/web/_includes/_files/scripts/recaptcha.php' %}
+{% endblock %}
+
 {% block content %}
 
 	<div class="container padding-xs">
@@ -13,7 +17,7 @@
 
 				{% include 'components/messages/messages.php' %}
 				
-				<form id="contact-form" action="{{ path_for('contactSubmit') }}" method="post" autocomplete="{{ config.app.autocomplete }}">
+				<form id="contact-form" action="{{ path_for('postContact') }}" method="post" autocomplete="{{ config.app.autocomplete }}">
 					<div class="form-row">
 						<div class="col-lg-6 mb-3">
 							<label>First Name <span class="red">*</span></label>
@@ -88,4 +92,8 @@
 	</div>
 
 {% endblock %}
-                        
+
+{% block scripts_forms %}
+    {% include 'pages/web/_includes/_files/scripts/contact-form.php' %}
+{% endblock %}
+                     

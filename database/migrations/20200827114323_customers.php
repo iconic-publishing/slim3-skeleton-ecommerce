@@ -10,12 +10,12 @@ class Customers extends Migration {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index();
             $table->string('title', 4)->nullable();
-            $table->string('first_name', 100);
-            $table->string('last_name', 100);
+            $table->string('first_name', 100)->nullable();
+            $table->string('last_name', 100)->nullable();
             $table->string('phone_number', 25)->nullable();
             $table->string('mobile_number', 25)->nullable();
-            $table->boolean('sms');
-            $table->boolean('gdpr');
+            $table->boolean('sms')->default(false);
+            $table->boolean('gdpr')->default(false);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

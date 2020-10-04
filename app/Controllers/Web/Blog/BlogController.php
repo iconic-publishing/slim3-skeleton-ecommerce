@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Controllers\Web;
+namespace Base\Controllers\Web\Blog;
 
 use Base\Models\Blog\Blog;
 use Base\Constructor\BaseConstructor;

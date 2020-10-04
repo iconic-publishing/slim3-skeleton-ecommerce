@@ -2,6 +2,8 @@
 
 namespace Base\Controllers\Auth;
 
+use Base\Helpers\Filter;
+use ReCaptcha\ReCaptcha;
 use Base\Models\User\User;
 use Base\Constructor\BaseConstructor;
 use Psr\Http\Message\ResponseInterface;
@@ -15,32 +17,42 @@ class AuthRecoverPasswordController extends BaseConstructor {
     }
 	
     public function postRecoverPassword(ServerRequestInterface $request, ResponseInterface $response) {
-        $email_address = $request->getParam('email_address');
+        $ip = Filter::ip();
+        
+        $recaptcha = new ReCaptcha($this->config->get('recaptcha.invisible.secretKey'));
+        $resp = $recaptcha->setExpectedHostname($_SERVER['SERVER_NAME'])->verify($request->getParam('g-recaptcha-response', $ip));
 
-        $user = User::where('email_address', $email_address)->first();
+        if($resp->isSuccess()) {
+            $email_address = $request->getParam('email_address');
 
-        if(!$user) {
-            $this->flash->addMessage('error', $this->config->get('messages.recover.error'));
-            return $response->withRedirect($this->router->pathFor('getRecoverPassword'));
+            $user = User::where('email_address', $email_address)->first();
+
+            if(!$user) {
+                $this->flash->addMessage('error', $this->config->get('messages.recover.error'));
+                return $response->withRedirect($this->router->pathFor('getRecoverPassword'));
+            } else {
+                $identifier = $this->hash->hashed($this->config->get('auth.recover'));
+
+                $user->update([
+                    'recover_hash' => $identifier
+                ]);
+
+                $this->mail->to($user->email_address, $this->config->get('mail.from.name'))->send(new Recover($user, $identifier));
+
+                /*
+                Send SMS to User
+                $number = $user->mobile_number;
+                $body = $this->view->fetch('components/services/sms/auth/recover-password.php', compact('user'));
+                $this->sms->send($number, $body);
+                */
+
+                $this->flash->addMessage('success', $this->config->get('messages.recover.success'));
+                return $response->withRedirect($this->router->pathFor('getLogin'));
+            }
         } else {
-            $identifier = $this->hash->hashed($this->config->get('auth.recover'));
-
-            $user->update([
-                'recover_hash' => $identifier
-            ]);
-
-            $this->mail->to($user->email_address, $this->config->get('mail.from.name'))->send(new Recover($user, $identifier));
-
-            /*
-            Send SMS to User
-            */
-            $number = $user->mobile_number;
-            $body = $this->view->fetch('components/services/sms/auth/recover-password.php', compact('user'));
-            $this->sms->send($number, $body);
-
-            $this->flash->addMessage('success', $this->config->get('messages.recover.success'));
-            return $response->withRedirect($this->router->pathFor('getLogin'));
-        }
+			$this->flash->addMessage('error', $this->config->get('messages.recaptcha.error'));
+			return $response->withRedirect($this->router->pathFor('getRecoverPassword'));
+		}
     }
 
 }

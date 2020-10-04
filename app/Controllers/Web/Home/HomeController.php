@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Controllers\Web;
+namespace Base\Controllers\Web\Home;
 
 use Base\Constructor\BaseConstructor;
 use Psr\Http\Message\ResponseInterface;

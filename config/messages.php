@@ -13,7 +13,7 @@ return [
         ],
 
         'recaptcha' => [
-            'error' => 'Please Tick the reCAPTCHA box to prove you are human and not a robot.'
+            'error' => 'Robot reCAPTCHA verification failed. Please try again.'
         ],
 
         'contact' => [
@@ -51,7 +51,20 @@ return [
             'passwordReset' => 'You have requested a Password Reset. Please use the link in the email we have sent you.',
             'locked' => 'Account Locked! Please contact our Admin Dept.',
             'logout' => 'You have logged out successfully.'
-        ]
+        ],
+
+        'payment' => [
+			'member' => [
+				'token' => 'Error! Have you supplied your Card Details?',
+				'invalid' => 'Invalid input supplied!',
+				'success' => 'Congratulations! Order completed successfully.'
+			],
+			'checkout' => [
+				'token' => 'Error! Have you supplied your Card Details?',
+				'invalid' => 'Invalid input supplied!',
+				'success' => 'Congratulations! Your order was completed successfully.'
+			],
+		],
     ]
 	
 ];

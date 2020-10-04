@@ -1,5 +1,9 @@
 {% extends 'layouts/web-layout.php' %}
 
+{% block scripts_recaptcha %}
+{% include 'pages/web/_includes/_files/scripts/recaptcha.php' %}
+{% endblock %}
+
 {% block content %}
 
 	<div class="container padding-xs">
@@ -41,4 +45,8 @@
 		</div>
 	</div>
 	
+{% endblock %}
+
+{% block scripts_forms %}
+    {% include 'pages/web/_includes/_files/scripts/login-form.php' %}
 {% endblock %}

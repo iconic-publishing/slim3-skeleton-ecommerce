@@ -38,7 +38,7 @@ return [
     'stripe' => [
         'secret' => getenv('STRIPE_SECRET'),
         'public' => getenv('STRIPE_PUBLIC'),
-        'currency' => getenv('STRIPE_CURRENCY', 'USD')
+        'currency' => getenv('STRIPE_CURRENCY', 'GBP')
     ],
 
     'mailchimp' => [

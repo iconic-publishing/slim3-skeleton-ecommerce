@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AuthLogoutController extends BaseConstructor {
 	
-    public function logout(ServerRequestInterface $request, ResponseInterface $response) {
+    public function getLogout(ServerRequestInterface $request, ResponseInterface $response) {
         $this->auth->user()->removeLoginToken();
         $this->auth->user()->removeLoginIp();
         $this->auth->user()->removeLoginTime();

@@ -10,7 +10,7 @@
 	<div class="container padding-xs">
 		<div class="row">
 			<div class="col-lg-8">
-				<h1>Slim 3 Starter Skeleton</h1>
+				<h1>Slim 3 e-Commerce Skeleton</h1>
 
 				<hr>
 
@@ -26,9 +26,9 @@
 
 				<h3>Datebase Installation</h3>
 
-				<p>Create a Database named <code>skeleton</code>. From the Terminal, Run <code>phinx migrate</code> from your project root to create the <code>users table</code>, <code>users roles table</code>, <code>customers table</code> and <code>admins table</code>.</p>
+				<p>Create a Database named <code>skeleton</code>. From the Terminal, Run <code>phinx migrate</code> from your project root to create the Database Tables. Migrations are located in <code>database/migrations</code>.</p>
 
-				<p>To create a new migration, Run <code>phinx create Blogs</code>. This will create a blogs migration in <code>database/migrations</code>. Add your table components and Run <code>phinx migrate</code> to add the <code>blogs table</code> to your database.</p>
+				<p>To create a new migration, Run <code>phinx create NewMigrationName</code>. This will create a new migration in <code>database/migrations</code>. Add your table components and Run <code>phinx migrate</code> to add the new migration to your database.</p>
 
 				<hr>
 				
@@ -53,9 +53,9 @@
 							<li>Twilio SMS API</li>
 							<li>Number Verify API</li>
 							<li>MailChimp API</li>
-							<li>Stripe API <i class="fa fa-cc-stripe" aria-hidden="true"></i></li>
 							<li>Google Invisible reCaptcha</li>
 							<li>jQuery Form Validation</li>
+							<li>Stripe API <i class="fa fa-cc-stripe" aria-hidden="true"></i></li>
 						</ul>
 					</div>
 				</div>
@@ -67,8 +67,11 @@
 				<hr>
 
 				<ul>
+					<li><a href="{{ path_for('getProducts') }}">View Sample Products Page</a></li>
+					<li><a href="{{ path_for('getCart') }}">View Sample Checkout Page</a></li>
+					<hr>
 					<li><a href="{{ path_for('getBlogs') }}">View Sample Blog Page</a></li>
-					<li><a href="{{ path_for('contact') }}">View Sample Contact Page</a></li>
+					<li><a href="{{ path_for('getContact') }}">View Sample Contact Page</a></li>
 					<hr>
 					<li><a href="{{ path_for('getRegister') }}">View Sample Register Page</a></li>
 					<li><a href="{{ path_for('getLogin') }}">View Sample Login Page</a></li>

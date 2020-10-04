@@ -3,6 +3,7 @@
 namespace Base\Controllers\Auth;
 
 use Base\Helpers\Filter;
+use ReCaptcha\ReCaptcha;
 use Base\Models\User\User;
 use Base\Models\User\UserPermission;
 use Base\Constructor\BaseConstructor;
@@ -17,42 +18,52 @@ class AuthRegisterController extends BaseConstructor {
     }
 
     public function postRegister(ServerRequestInterface $request, ResponseInterface $response) {
-        $identifier = $this->hash->hashed($this->config->get('auth.register'));
+        $ip = Filter::ip();
 
-        $user = User::create([
-            'username' => mt_rand(100000, 999999),
-            'email_address' => $request->getParam('email_address'),
-            'email_address_verified' => $identifier,
-            'password' => $this->hash->password($request->getParam('password')),
-            'active' => false,
-            'locked' => true,
-            'active_hash' => $identifier,
-            'register_ip' => Filter::ip()
-        ]);
+        $recaptcha = new ReCaptcha($this->config->get('recaptcha.invisible.secretKey'));
+        $resp = $recaptcha->setExpectedHostname($_SERVER['SERVER_NAME'])->verify($request->getParam('g-recaptcha-response', $ip));
 
-        $user->role()->attach(3);
+        if($resp->isSuccess()) {
+            $identifier = $this->hash->hashed($this->config->get('auth.register'));
 
-        $user->customer()->create([
-            'title' => null,
-            'first_name' => $request->getParam('first_name'),
-            'last_name' => $request->getParam('last_name'),
-            'phone_number' => null,
-            'mobile_number' => $request->getParam('mobile_number'),
-            'sms' => false,
-            'gdpr' => false
-        ]);
+            $user = User::create([
+                'username' => mt_rand(100000, 999999),
+                'email_address' => $request->getParam('email_address'),
+                'email_address_verified' => $identifier,
+                'password' => $this->hash->password($request->getParam('password')),
+                'active' => false,
+                'locked' => true,
+                'active_hash' => $identifier,
+                'register_ip' => $ip
+            ]);
 
-        $this->mail->to($user->email_address, $this->config->get('mail.from.name'))->send(new Activation($user, $identifier));
+            $user->role()->attach(3);
 
-        /*
-        Send SMS to New Registered User
-        */
-        $number = $request->getParam('mobile_number');
-        $body = $this->view->fetch('components/services/sms/auth/activation.php', compact('user', 'identifier'));
-        $this->sms->send($number, $body);
+            $user->customer()->create([
+                'title' => null,
+                'first_name' => $request->getParam('first_name'),
+                'last_name' => $request->getParam('last_name'),
+                'phone_number' => null,
+                'mobile_number' => $request->getParam('mobile_number'),
+                'sms' => false,
+                'gdpr' => false
+            ]);
 
-        $this->flash->addMessage('success', $this->config->get('messages.register.success'));
-        return $response->withRedirect($this->router->pathFor('getLogin'));
+            $this->mail->to($user->email_address, $this->config->get('mail.from.name'))->send(new Activation($user, $identifier));
+
+            /*
+            Send SMS to New Registered User
+            $number = $request->getParam('mobile_number');
+            $body = $this->view->fetch('components/services/sms/auth/activation.php', compact('user', 'identifier'));
+            $this->sms->send($number, $body);
+            */
+
+            $this->flash->addMessage('success', $this->config->get('messages.register.success'));
+            return $response->withRedirect($this->router->pathFor('getLogin'));
+        } else {
+			$this->flash->addMessage('error', $this->config->get('messages.recaptcha.error'));
+			return $response->withRedirect($this->router->pathFor('getRegister'));
+		}
     }
 
 }

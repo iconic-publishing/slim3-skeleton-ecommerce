@@ -10,7 +10,7 @@ use Base\Services\Mail\Build\Auth\Verification;
 
 class AuthActivateController extends BaseConstructor {
 	
-    public function activate(ServerRequestInterface $request, ResponseInterface $response) {
+    public function getActivate(ServerRequestInterface $request, ResponseInterface $response) {
         $email_address = $request->getParam('email_address');
         $identifier = $request->getParam('identifier');
         
@@ -31,10 +31,10 @@ class AuthActivateController extends BaseConstructor {
 
             /*
             Send SMS to User
-            */
             $number = $user->mobile_number;
             $body = $this->view->fetch('components/services/sms/auth/verification.php', compact('user', 'identifier'));
             $this->sms->send($number, $body);
+            */
 
             $this->flash->addMessage('success', $this->config->get('messages.activate.success'));
             return $response->withRedirect($this->router->pathFor('getLogin'));

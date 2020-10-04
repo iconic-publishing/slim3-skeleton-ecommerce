@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Controllers\Member;
+namespace Base\Controllers\Member\Dashboard;
 
 use Base\Constructor\BaseConstructor;
 use Psr\Http\Message\ResponseInterface;

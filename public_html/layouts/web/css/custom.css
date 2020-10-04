@@ -19,3 +19,45 @@ select {
 :disabled {
 	cursor: not-allowed;
 }
+
+.bold {
+	font-weight: bold;
+}
+
+.terms-text {
+    font-size: 80%;
+    vertical-align: text-bottom;
+}
+
+.StripeElement {
+    background-color: #fff;
+    box-shadow: none;
+    height: calc(2.25rem + 2px);
+	line-height: 1.5;
+	color: #495057;
+    padding: 9px .75rem;
+    border-radius: .25rem;
+    border: 1px solid #ced4da;
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -ms-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+}
+.StripeElement--focus {
+    border-color: #121212 !important;
+    outline: 0 !important;
+}
+.StripeElement--invalid {
+    border: 1px solid #dc3545 !important;
+}
+.StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}
+.StripeElement--empty {
+    border: 1px solid #dc3545 !important;
+}
+#card-errors {
+    margin-top: .25rem;
+    font-size: 80%;
+}
