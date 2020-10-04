@@ -91,12 +91,12 @@ class OrderController extends BaseConstructor {
                     'county' => ucwords(strtoupper($request->getParam('county'))),
                     'postcode' => strtoupper($request->getParam('postcode')),
                     'country' => strtoupper($request->getParam('country'))
-				]);
+                ]);
                 
                 $this->mail->to($email, $this->config->get('mail.from.name'))->send(new Activation($user, $identifier));
             }
 
-			$user->address()->update([
+            $user->address()->update([
                 'address' => ucwords(strtoupper($request->getParam('address'))),
                 'city' => ucwords(strtoupper($request->getParam('city'))),
                 'county' => ucwords(strtoupper($request->getParam('county'))),
@@ -105,10 +105,10 @@ class OrderController extends BaseConstructor {
             ]);
 
             $order_id = mt_rand(10000000000, 99999999999);
-			$subTotal = $this->basket->subTotal();
-			$shipping = $this->basket->shipping();
-			$total = $this->basket->subTotal() + $this->basket->shipping();
-			$hash = $this->hash->hashed($this->config->get('auth.order'));
+            $subTotal = $this->basket->subTotal();
+            $shipping = $this->basket->shipping();
+            $total = $this->basket->subTotal() + $this->basket->shipping();
+            $hash = $this->hash->hashed($this->config->get('auth.order'));
 
             $order = $user->orders()->create([
                 'order_id' => $order_id,
@@ -127,9 +127,9 @@ class OrderController extends BaseConstructor {
                 'hash' => $hash
             ]);
 
-			$order->products()->saveMany(
-				$this->basket->all(),
-				$this->getQuantities($this->basket->all())
+            $order->products()->saveMany(
+                $this->basket->all(),
+                $this->getQuantities($this->basket->all())
             );
             
             try {
