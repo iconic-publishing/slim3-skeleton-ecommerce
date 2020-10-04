@@ -47,21 +47,21 @@ class OrderController extends BaseConstructor {
             
             $stripeToken = $request->getParam('stripeToken');
 
-			if(!$stripeToken) {
-				$this->flash->addMessage('error', $this->config->get('messages.payment.checkout.token'));
-				return $response->withRedirect($this->router->pathFor('getOrder'));
-			}
+            if(!$stripeToken) {
+                $this->flash->addMessage('error', $this->config->get('messages.payment.checkout.token'));
+                return $response->withRedirect($this->router->pathFor('getOrder'));
+            }
 
             $email = trim(strtolower($request->getParam('email_address')));
             $identifier = $this->hash->hashed($this->config->get('auth.register'));
             $password = $this->hash->password($request->getParam('password'));
 
-			//$folder = str_replace('CGB-', '', $order_id);
-			//mkdir($this->config->get('upload.path') . $folder, 0755);
+            //$folder = str_replace('CGB-', '', $order_id);
+            //mkdir($this->config->get('upload.path') . $folder, 0755);
 
-			$user = User::where('email_address', $email)->first();
+            $user = User::where('email_address', $email)->first();
 
-			if(!$user) {
+            if(!$user) {
                 $user = User::create([
                     'username' => $username = mt_rand(100000, 999999),
                     'email_address' => $email,
@@ -76,21 +76,21 @@ class OrderController extends BaseConstructor {
                 $user->role()->attach(3);
 
                 $user->customer()->create([
-					'title' => $request->getParam('title'),
-					'first_name' => ucwords(strtolower($request->getParam('first_name'))),
-					'last_name' => ucwords(strtolower($request->getParam('last_name'))),
-					'phone_number' => $request->getParam('phone_number'),
-					'mobile_number' => null,
-					'sms' => false,
-					'gdpr' => false
+                    'title' => $request->getParam('title'),
+                    'first_name' => ucwords(strtolower($request->getParam('first_name'))),
+                    'last_name' => ucwords(strtolower($request->getParam('last_name'))),
+                    'phone_number' => $request->getParam('phone_number'),
+                    'mobile_number' => null,
+                    'sms' => false,
+                    'gdpr' => false
                 ]);
 
                 $user->address()->create([
-					'address' => ucwords(strtoupper($request->getParam('address'))),
-					'city' => ucwords(strtoupper($request->getParam('city'))),
-					'county' => ucwords(strtoupper($request->getParam('county'))),
-					'postcode' => strtoupper($request->getParam('postcode')),
-					'country' => strtoupper($request->getParam('country'))
+                    'address' => ucwords(strtoupper($request->getParam('address'))),
+                    'city' => ucwords(strtoupper($request->getParam('city'))),
+                    'county' => ucwords(strtoupper($request->getParam('county'))),
+                    'postcode' => strtoupper($request->getParam('postcode')),
+                    'country' => strtoupper($request->getParam('country'))
 				]);
                 
                 $this->mail->to($email, $this->config->get('mail.from.name'))->send(new Activation($user, $identifier));
