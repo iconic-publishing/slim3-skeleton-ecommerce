@@ -212,7 +212,7 @@ class OrderController extends BaseConstructor {
                 $this->flash->addMessage('error', $e->getMessage());
                 return $response->withRedirect($this->router->pathFor('order', compact('hash')));
             }
-		} else {
+        } else {
             $this->flash->addMessage('error', $this->config->get('messages.recaptcha.error'));
             return $response->withRedirect($this->router->pathFor('getOrder'));
         }
