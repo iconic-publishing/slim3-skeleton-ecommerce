@@ -11,6 +11,7 @@ use Base\Handlers\MarkGDPR;
 use Base\Handlers\EmptyBasket;
 use Base\Handlers\UpdateStock;
 use Base\Events\OrderWasCreated;
+use Base\Handlers\CreateInvoice;
 use Base\Handlers\MarkOrderPaid;
 use Stripe\Error\InvalidRequest;
 use Base\Handlers\MarkTermsAccepted;
@@ -54,10 +55,6 @@ class OrderController extends BaseConstructor {
 
             $email = trim(strtolower($request->getParam('email_address')));
             $identifier = $this->hash->hashed($this->config->get('auth.register'));
-            $password = $this->hash->password($request->getParam('password'));
-
-            //$folder = str_replace('CGB-', '', $order_id);
-            //mkdir($this->config->get('upload.path') . $folder, 0755);
 
             $user = User::where('email_address', $email)->first();
 
@@ -109,6 +106,8 @@ class OrderController extends BaseConstructor {
             $shipping = $this->basket->shipping();
             $total = $this->basket->subTotal() + $this->basket->shipping();
             $hash = $this->hash->hashed($this->config->get('auth.order'));
+            $folder = $this->config->get('upload.folder.name') . $order_id;
+            mkdir($this->config->get('upload.path') . $folder, 0755);
 
             $order = $user->orders()->create([
                 'order_id' => $order_id,
@@ -166,6 +165,7 @@ class OrderController extends BaseConstructor {
                     new MarkGDPR(
                         ($request->getParam('gdpr') === 'on') ?: false
                     ),
+                    new CreateInvoice,
                     new UpdateStock,
                     new EmptyBasket
                 ]);
