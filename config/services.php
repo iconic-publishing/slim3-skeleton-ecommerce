@@ -29,8 +29,8 @@ return [
 
     'number' => [
         'verify' => [
-			'api' => getenv('NUMBER_VERIFY_API_KEY'),
-			'https' => getenv('NUMBER_VERIFY_HTTPS')
+            'api' => getenv('NUMBER_VERIFY_API_KEY'),
+            'https' => getenv('NUMBER_VERIFY_HTTPS')
         ]
     ],
 
@@ -42,14 +42,14 @@ return [
     ],
 
     'recaptcha' => [
-		'invisible' => [
-			'siteKey' => getenv('RECAPTCHA_INVISIBLE_SITE_KEY'),
-			'secretKey' => getenv('RECAPTCHA_INVISIBLE_SECRET_KEY'),
-			'badge' => getenv('RECAPTCHA_INVISIBLE_BADGE')
+        'invisible' => [
+            'siteKey' => getenv('RECAPTCHA_INVISIBLE_SITE_KEY'),
+            'secretKey' => getenv('RECAPTCHA_INVISIBLE_SECRET_KEY'),
+            'badge' => getenv('RECAPTCHA_INVISIBLE_BADGE')
         ],
         
-		'locale' => getenv('RECAPTCHA_LOCALE', 'en')
-	],
+        'locale' => getenv('RECAPTCHA_LOCALE', 'en')
+    ],
 
     'gmaps' => [
         'api' => getenv('GMAPS_API')
