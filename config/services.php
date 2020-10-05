@@ -14,6 +14,13 @@ return [
         ]
     ],
 
+    'number' => [
+        'verify' => [
+			'api' => getenv('NUMBER_VERIFY_API_KEY'),
+			'https' => getenv('NUMBER_VERIFY_HTTPS')
+        ]
+    ],
+
     'twilio' => [
         'sid' => getenv('TWILIO_SID'),
         'token' => getenv('TWILIO_TOKEN'),

@@ -1,4 +1,4 @@
-Customer Failed Payment
+Customer Failed Online Payment
 
 Order ID: {{ order.order_id }}
 
@@ -13,7 +13,7 @@ Order Items:
 {% endfor %}
 
 Sub-Total: £{{ order.sub_total | number_format(2) }}
-Shipping: {% if order.shipping == 0 %} FREE SHIPPING {% else %} £{{ order.shipping | number_format(2) }} {% endif %}
+Shipping: £{{ order.shipping | number_format(2) }}
 Order Total: £{{ order.total | number_format(2) }}
 
 Dated: {{ order.payment.created_at | date('jS F, Y @ H:i:s') }}

@@ -1,5 +1,6 @@
 <?php
 
+use Base\Middleware\PersistFormInputMiddleware;
 use Base\Middleware\StripeMiddleware;
 use Base\Controllers\Web\Blog\BlogController;
 use Base\Controllers\Web\Cart\CartController;
@@ -26,7 +27,7 @@ $app->group('/shopping-basket', function() {
 $app->group('/checkout', function() {
     $this->get('', OrderController::class . ':getOrder')->setName('getOrder');
     $this->post('/process-order', OrderController::class . ':postOrder')->setName('postOrder');
-})->add(new StripeMiddleware($container));
+})->add(new PersistFormInputMiddleware($container))->add(new StripeMiddleware($container));
 
 $app->get('/order/complete/{hash}', ShowOrderController::class . ':getShowOrder')->setName('getShowOrder');
 
@@ -38,4 +39,4 @@ $app->group('/blog', function() {
 $app->group('/contact', function() {
     $this->get('', ContactController::class . ':getContact')->setName('getContact');
     $this->post('', ContactController::class . ':postContact')->setName('postContact');
-});
+})->add(new PersistFormInputMiddleware($container));

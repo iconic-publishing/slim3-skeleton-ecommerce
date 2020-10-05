@@ -14,3 +14,4 @@ For and on behalf of {{ config.company.name }}
 {{ config.meta.copyright }}
 
 Disclaimer: This message is confidential. It may also be privileged or otherwise protected by work product immunity or other legal rules. If you have received it by mistake, please let us know by e-mail reply {{ config.company.email }} and delete it from your system, you may not copy this message or disclose its contents to anyone. The integrity and security of this message cannot be guaranteed on the Internet.
+

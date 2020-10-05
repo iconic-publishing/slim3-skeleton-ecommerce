@@ -27,6 +27,11 @@ select {
 .terms-text {
     font-size: 80%;
     vertical-align: text-bottom;
+    margin-top: .25rem;
+}
+
+.iti {
+    width: 100%;
 }
 
 .StripeElement {

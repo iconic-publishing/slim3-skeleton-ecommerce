@@ -10,34 +10,35 @@ class CreateInvoice implements HandlerInterface {
     public function handle($event) {
 		$order = $event->order;
 		$payment = $order->payment->where('failed', false)->first();
+		$currency = getenv('STRIPE_CURRENCY', 'GBP');
 		
         $pdf = new OrderInvoice('P', 'mm', 'A4');
 		$pdf->AddPage();
 		$pdf->addLogo();
 		$pdf->addInvoiceNumber('INVOICE ', $order->order_id);
 		$pdf->addWatermarkPaid('**Invoice Paid**');
-		$pdf->addCurrency('GBP');
+		$pdf->addCurrency($currency);
 		$pdf->addInvoiceDate(date('jS F, Y', strtotime($order->created_at)));
 		$pdf->addClientAddress(
-			$order->user->customer->getFullName() | upper . "\n" . 
-			$order->user->address->address . "\n" . 
-			$order->user->address->city . "\n" . 
-			$order->user->address->county . "\n" . 
-			$order->user->address->postcode . "\n" . 
+			strtoupper($order->user->customer->getFullName()) . "\n" . 
+			strtoupper($order->user->address->address) . "\n" . 
+			strtoupper($order->user->address->city) . "\n" . 
+			strtoupper($order->user->address->county) . "\n" . 
+			strtoupper($order->user->address->postcode) . "\n" . 
 			strtoupper($order->user->address->country)
 		);
 		$pdf->addCompanyAddress(
-			getenv('INVOICE_NAME') . "\n" . 
-			getenv('INVOICE_ADDRESS_1') . "\n" . 
-			getenv('INVOICE_ADDRESS_2') . "\n" . 
-			strtoupper(getenv('INVOICE_ADDRESS_3')) . "\n" . 
-			strtoupper(getenv('INVOICE_ADDRESS_4')) . "\n" . 
-			getenv('COMPANY_WEBSITE') . "\n" . 
-			getenv('INVOICE_EMAIL')
+			strtoupper(getenv('COMPANY_NAME')) . "\n" . 
+			strtoupper(getenv('COMPANY_ADDRESS_1')) . "\n" . 
+			strtoupper(getenv('COMPANY_ADDRESS_2')) . "\n" . 
+			strtoupper(getenv('COMPANY_ADDRESS_3')) . "\n" . 
+			strtoupper(getenv('COMPANY_ADDRESS_4')) . "\n" . 
+			strtolower(getenv('COMPANY_WEBSITE')) . "\n" . 
+			strtolower(getenv('COMPANY_EMAIL'))
 		);
 		$pdf->addPaidBy($payment->brand . ' ' . $payment->card);
 		$pdf->addPaymentDate(date('jS F Y', strtotime($payment->created_at)));
-		$pdf->addInvoiceTotal(number_format($order->total, 2) . ' (GBP)');
+		$pdf->addInvoiceTotal(number_format($order->total, 2) . ' (' . $currency . ')');
 		$cols = [
 			'ORDER ID'     => 40,
 			'DESCRIPTION'  => 60,
@@ -63,18 +64,18 @@ class CreateInvoice implements HandlerInterface {
 		$y = 105;
 		
 		foreach($order->products as $product) {
-			$dicount = $product->normal_price - $product->sale_price;
+			$dicount = 0;
 
 			$line = [
 				'ORDER ID'     => $order->order_id,
 				'DESCRIPTION'  => $product->title,
 				'QTY'          => $product->pivot->quantity,
-				'PRICE' 	   => number_format($product->normal_price * $product->pivot->quantity, 2),
+				'PRICE' 	   => number_format($product->price * $product->pivot->quantity, 2),
 				'DISCOUNT' 	   => number_format($dicount * $product->pivot->quantity, 2),
-				'TOTAL'        => number_format($product->sale_price * $product->pivot->quantity, 2)
+				'TOTAL'        => number_format($product->price * $product->pivot->quantity, 2)
 			];
 
-			$sizes = $pdf->addLine($y +=5, $line);
+			$sizes = $pdf->addLine($y += 5, $line);
 		}
 
 		$pdf->addMessage('Thank you for choosing ' . getenv('COMPANY_NAME') . "\n\nFor our latest promotions visit our website " . getenv('COMPANY_WEBSITE'));
@@ -82,9 +83,10 @@ class CreateInvoice implements HandlerInterface {
 		$pdf->addBottomShipping(number_format($order->shipping, 2));
 		$pdf->addBottomTotal(number_format($order->total, 2));
 		
-		$folder = str_replace('CGB-', '', $order->order_id);
-		$file = str_replace('CGB-', '', $order->order_id);
-		$path = __DIR__ . '/../../public_html/layouts/_uploads/' . $folder . DIRECTORY_SEPARATOR . $file . '-I.pdf';
+		$folder = $order->order_id;
+		mkdir(__DIR__ . getenv('INVOICE_PATH') . $folder, 0755);
+		$file = $order->order_id;
+		$path = __DIR__ . getenv('INVOICE_PATH') . $folder . DIRECTORY_SEPARATOR . $file . '-I.pdf';
 		
 		$pdf->Output('F', $path, false);
 	}

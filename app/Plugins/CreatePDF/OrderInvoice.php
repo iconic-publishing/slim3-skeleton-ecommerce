@@ -126,7 +126,7 @@ class OrderInvoice extends FPDF {
 	}
 	
 	public function addLogo() {
-		$this->Image(__DIR__ . '/../../../public_html/layouts/web/images/logo.png', 10, 6, 80);
+		$this->Image(__DIR__ . getenv('INVOICE_LOGO_PATH'), 10, 6, 80);
 		$this->Ln(20);
 	}
 	

@@ -4,6 +4,7 @@ namespace Base\Controllers\Auth;
 
 use Base\Helpers\Filter;
 use ReCaptcha\ReCaptcha;
+use Base\Helpers\Session;
 use Base\Models\User\User;
 use Base\Models\User\UserPermission;
 use Base\Constructor\BaseConstructor;
@@ -44,7 +45,7 @@ class AuthRegisterController extends BaseConstructor {
                 'first_name' => $request->getParam('first_name'),
                 'last_name' => $request->getParam('last_name'),
                 'phone_number' => null,
-                'mobile_number' => $request->getParam('mobile_number'),
+                'mobile_number' => $request->getParam('phone_number_valid'),
                 'sms' => false,
                 'gdpr' => false
             ]);
@@ -53,10 +54,12 @@ class AuthRegisterController extends BaseConstructor {
 
             /*
             Send SMS to New Registered User
-            $number = $request->getParam('mobile_number');
+            $number = $request->getParam('phone_number_valid');
             $body = $this->view->fetch('components/services/sms/auth/activation.php', compact('user', 'identifier'));
             $this->sms->send($number, $body);
             */
+
+            Session::delete('persist');
 
             $this->flash->addMessage('success', $this->config->get('messages.register.success'));
             return $response->withRedirect($this->router->pathFor('getLogin'));

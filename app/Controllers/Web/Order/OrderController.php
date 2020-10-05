@@ -2,10 +2,11 @@
 
 namespace Base\Controllers\Web\Order;
 
-use Stripe\Card;
 use Stripe\Charge;
+use Stripe\Error\Card;
 use Base\Helpers\Filter;
 use ReCaptcha\ReCaptcha;
+use Base\Helpers\Session;
 use Base\Models\User\User;
 use Base\Handlers\MarkGDPR;
 use Base\Handlers\EmptyBasket;
@@ -76,7 +77,7 @@ class OrderController extends BaseConstructor {
                     'title' => $request->getParam('title'),
                     'first_name' => ucwords(strtolower($request->getParam('first_name'))),
                     'last_name' => ucwords(strtolower($request->getParam('last_name'))),
-                    'phone_number' => $request->getParam('phone_number'),
+                    'phone_number' => $request->getParam('phone_number_valid'),
                     'mobile_number' => null,
                     'sms' => false,
                     'gdpr' => false
@@ -101,13 +102,11 @@ class OrderController extends BaseConstructor {
                 'country' => strtoupper($request->getParam('country'))
             ]);
 
-            $order_id = mt_rand(10000000000, 99999999999);
+            $order_id = $this->config->get('upload.folder.name') . mt_rand(100000, 999999);
             $subTotal = $this->basket->subTotal();
             $shipping = $this->basket->shipping();
             $total = $this->basket->subTotal() + $this->basket->shipping();
             $hash = $this->hash->hashed($this->config->get('auth.order'));
-            $folder = $this->config->get('upload.folder.name') . $order_id;
-            mkdir($this->config->get('upload.path') . $folder, 0755);
 
             $order = $user->orders()->create([
                 'order_id' => $order_id,
@@ -171,6 +170,8 @@ class OrderController extends BaseConstructor {
                 ]);
                 $event->dispatch();
 
+                Session::delete('persist');
+
                 $this->mail->to($order->user->email_address, $this->config->get('mail.from.name'))->send(new WebOrderConfirmation($order));
                 $this->mail->to($this->config->get('company.email'), $this->config->get('mail.from.name'))->send(new AdminOrderConfirmation($order));
 
@@ -210,7 +211,7 @@ class OrderController extends BaseConstructor {
                 $this->mail->to($this->config->get('company.email'), $this->config->get('mail.from.name'))->send(new AdminFailedPayment($order));
 
                 $this->flash->addMessage('error', $e->getMessage());
-                return $response->withRedirect($this->router->pathFor('order', compact('hash')));
+                return $response->withRedirect($this->router->pathFor('getOrder', compact('hash')));
             }
         } else {
             $this->flash->addMessage('error', $this->config->get('messages.recaptcha.error'));

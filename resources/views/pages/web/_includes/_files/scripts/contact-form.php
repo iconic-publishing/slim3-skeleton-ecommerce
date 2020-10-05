@@ -28,7 +28,7 @@
 						required: true,
 						email: true
 					},
-					mobile_number: {
+					phone_number: {
 						required: true
 					},
 					country: {
@@ -54,8 +54,8 @@
 					email_address: {
 						required: 'Email Address is required!'
 					},
-					mobile_number: {
-						required: 'Mobile Number is required!'
+					phone_number: {
+						required: 'Phone Number is required!'
 					},
 					country: {
 						required: 'Country is required!'

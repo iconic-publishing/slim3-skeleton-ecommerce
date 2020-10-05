@@ -1,5 +1,9 @@
 {% extends 'layouts/web-layout.php' %}
 
+{% block css_number_verify %}
+{% include 'pages/web/_includes/_files/css/number-verify.php' %}
+{% endblock %}
+
 {% block scripts_recaptcha %}
 {% include 'pages/web/_includes/_files/scripts/recaptcha.php' %}
 {% endblock %}
@@ -21,26 +25,30 @@
 					<div class="form-row">
 						<div class="col-lg-6 mb-3">
 							<label>First Name <span class="red">*</span></label>
-							<input type="text" class="form-control" name="first_name">
+							<input type="text" class="form-control" name="first_name" value="{{ persist.first_name }}">
 							<label for="first_name" class="invalid-feedback error"></label>
 						</div>
 
 						<div class="col-lg-6 mb-3">
 							<label>Last Name <span class="red">*</span></label>
-							<input type="text" class="form-control" name="last_name">
+							<input type="text" class="form-control" name="last_name" value="{{ persist.last_name }}">
 							<label for="last_name" class="invalid-feedback error"></label>
 						</div>
 
 						<div class="col-lg-6 mb-3">
 							<label>Email Address <span class="red">*</span></label>
-							<input type="text" class="form-control" name="email_address">
+							<input type="text" class="form-control" name="email_address" value="{{ persist.email_address }}">
 							<label for="email_address" class="invalid-feedback error"></label>
 						</div>
 
 						<div class="col-lg-6 mb-3">
 							<label>Mobile Number <small><i>(SMS Verification)</i></small> <span class="red">*</span></label>
-							<input type="text" class="form-control" name="mobile_number">
-							<label for="mobile_number" class="invalid-feedback error"></label>
+							<input type="text" class="form-control" name="mobile_number" id="phone_number" value="{{ persist.mobile_number }}">
+							<label for="phone_number" class="invalid-feedback error"></label>
+
+							<input type="hidden" name="phone_number_valid" id="phone_number_valid" value="">
+							<!--<span id="valid-msg" class="valid-number softhide text-success terms-text"></span>-->
+							<span id="error-msg" class="invalid-number softhide text-danger terms-text"></span>
 						</div>
 						
 						<div class="col-lg-6 mb-3">
@@ -73,4 +81,8 @@
 
 {% block scripts_forms %}
     {% include 'pages/web/_includes/_files/scripts/register-form.php' %}
+{% endblock %}
+
+{% block scripts_number_verify %}
+    {% include 'pages/web/_includes/_files/scripts/number-verify.php' %}
 {% endblock %}

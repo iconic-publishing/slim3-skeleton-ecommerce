@@ -1,5 +1,6 @@
 <?php
 
+use Base\Middleware\PersistFormInputMiddleware;
 use Base\Controllers\Auth\AuthLoginController;
 use Base\Controllers\Auth\AuthLogoutController;
 use Base\Controllers\Auth\AuthActivateController;
@@ -10,7 +11,7 @@ use Base\Controllers\Auth\AuthRecoverPasswordController;
 $app->group('/register', function() {
     $this->get('', AuthRegisterController::class . ':getRegister')->setName('getRegister');
     $this->post('', AuthRegisterController::class . ':postRegister')->setName('postRegister');
-});
+})->add(new PersistFormInputMiddleware($container));
 
 $app->group('/activatation', function() {
     $this->get('', AuthActivateController::class . ':getActivate')->setName('getActivate');

@@ -9,7 +9,7 @@ use Base\View\Factory;
 use Noodlehaus\Config;
 use Base\Helpers\Input;
 use Base\Helpers\Token;
-use Base\Plugins\Select;
+use Base\Helpers\Select;
 use Base\Plugins\Upload;
 use Slim\Flash\Messages;
 use Base\Helpers\Permission;
@@ -29,6 +29,7 @@ use Base\View\Extensions\DebugExtension;
 use Illuminate\Database\Capsule\Manager;
 use Base\Middleware\CsrfStatusMiddleware;
 use Dotenv\Exception\InvalidPathException;
+use Base\Services\NumberVerify\NumberVerify;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 session_start();
@@ -144,6 +145,10 @@ $container['hash'] = function ($container) {
     return new Hash($container);
 };
 
+$container['mailchimp'] = function ($container) {
+    return new MailChimp($container);
+};
+
 $container['mail'] = function ($container) {
     $transport = (new Swift_SmtpTransport($container->config->get('mail.host'), $container->config->get('mail.port'), $container->config->get('mail.encryption')))
         ->setUsername($container->config->get('mail.username'))
@@ -154,16 +159,16 @@ $container['mail'] = function ($container) {
     return (new Mailer($swift, $container->view))->alwaysFrom($container->config->get('mail.from.address'), $container->config->get('mail.from.name'));
 };
 
+$container['number'] = function ($container) {
+    return new NumberVerify($container);
+};
+
 $container['mailer'] = function ($container) {
     return new Email($container);
 };
 
 $container['sms'] = function ($container) {
     return new Sms($container);
-};
-
-$container['mailchimp'] = function ($container) {
-    return new MailChimp($container);
 };
 
 $container['upload'] = function ($container) {

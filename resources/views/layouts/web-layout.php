@@ -11,6 +11,8 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 		<link rel="stylesheet" href="{{ base_url() }}/layouts/web/plugins/font-awesome-4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="{{ base_url() }}/layouts/web/css/custom.css">
+
+		{% block css_number_verify %}{% endblock %}
 		
 		{% block scripts_recaptcha %}{% endblock %}
 		
@@ -26,6 +28,8 @@
 		<script src="{{ base_url() }}/layouts/web/js/custom.js"></script>
 
 		{% block scripts_forms %}{% endblock %}
+
+		{% block scripts_number_verify %}{% endblock %}
 
 		{% block scripts_stripe %}{% endblock %}
 		

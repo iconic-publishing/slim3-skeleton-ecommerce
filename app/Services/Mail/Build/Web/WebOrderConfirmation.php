@@ -18,7 +18,8 @@ class WebOrderConfirmation extends Mailable {
             ->view('components/services/emails/web/order-confirmation.php')
 			->with([
                 'order' => $this->order
-            ]);
+            ])
+            ->attach(__DIR__ . '/../../..' . getenv('INVOICE_PATH') . $this->order->order_id . DIRECTORY_SEPARATOR . $this->order->order_id . '-I.pdf');
     }
 	
 }

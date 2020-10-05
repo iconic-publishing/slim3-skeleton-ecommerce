@@ -14,7 +14,7 @@ class AdminFailedPayment extends Mailable {
     }
 	
     public function build() {
-        return $this->subject(getenv('MAIL_FROM_NAME', 'Company Name') . ' - Customer Failed Payment')
+        return $this->subject(getenv('MAIL_FROM_NAME', 'Company Name') . ' - Customer Failed Online Payment')
             ->view('components/services/emails/admin/failed-payment.php')
 			->with([
                 'order' => $this->order

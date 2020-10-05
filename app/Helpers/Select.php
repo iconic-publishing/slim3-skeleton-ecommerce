@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Plugins;
+namespace Base\Helpers;
 
 use SameerShelavale\PhpCountriesArray\CountriesArray;
 

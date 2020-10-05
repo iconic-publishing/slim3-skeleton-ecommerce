@@ -1,5 +1,9 @@
 {% extends 'layouts/web-layout.php' %}
 
+{% block css_number_verify %}
+{% include 'pages/web/_includes/_files/css/number-verify.php' %}
+{% endblock %}
+
 {% block scripts_recaptcha %}
 {% include 'pages/web/_includes/_files/scripts/recaptcha.php' %}
 {% endblock %}
@@ -14,6 +18,8 @@
                 <h2>Checkout Page</h2>
 
                 <hr>
+
+                {% include 'components/messages/messages.php' %}
 			</div>
         </div>
 
@@ -29,7 +35,7 @@
                                 <select class="form-control" name="title">
                                     <option class="select-placeholder" disabled selected></option>
                                     {% for title in select.title() %}
-                                        <option value="{{ title }}">{{ title }}</option>
+                                        <option value="{{ title }}" {{ (title == persist.title) ? 'selected' : '' }}>{{ title }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="title" class="invalid-feedback error"></label>
@@ -37,26 +43,30 @@
 
                             <div class="col-md-12 mb-3">
                                 <label>First Name <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="first_name">
+                                <input type="text" class="form-control" name="first_name" value="{{ persist.first_name }}">
                                 <label for="first_name" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>Last Name <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="last_name">
+                                <input type="text" class="form-control" name="last_name" value="{{ persist.last_name }}">
                                 <label for="last_name" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>Email Address <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="email_address">
+                                <input type="text" class="form-control" name="email_address" value="{{ persist.email_address }}">
                                 <label for="email_address" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>Phone Number <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="phone_number">
+                                <input type="text" class="form-control" name="phone_number" id="phone_number" value="{{ persist.phone_number }}">
                                 <label for="phone_number" class="invalid-feedback error"></label>
+
+                                <input type="hidden" name="phone_number_valid" id="phone_number_valid" value="">
+                                <!--<span id="valid-msg" class="valid-number softhide text-success terms-text"></span>-->
+                                <span id="error-msg" class="invalid-number softhide text-danger terms-text"></span>
                             </div>
                         </div>
                     </div>
@@ -69,25 +79,25 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label>Address <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="address">
+                                <input type="text" class="form-control" name="address" value="{{ persist.address }}">
                                 <label for="address" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>City <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="city">
+                                <input type="text" class="form-control" name="city" value="{{ persist.city }}">
                                 <label for="city" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>County <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="county">
+                                <input type="text" class="form-control" name="county" value="{{ persist.county }}">
                                 <label for="county" class="invalid-feedback error"></label>
                             </div>
                             
                             <div class="col-md-12 mb-3">
                                 <label>Postcode <span class="red">*</span></label>
-                                <input type="text" class="form-control" name="postcode">
+                                <input type="text" class="form-control" name="postcode" value="{{ persist.postcode }}">
                                 <label for="postcode" class="invalid-feedback error"></label>
                             </div>
 
@@ -96,7 +106,7 @@
                                 <select class="form-control" name="country">
                                     <option class="select-placeholder" disabled selected></option>
                                     {% for country in select.country() %}
-                                        <option value="{{ country }}">{{ country }}</option>
+                                        <option value="{{ country }}" {{ (country == persist.country) ? 'selected' : '' }}>{{ country }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="country" class="invalid-feedback error"></label>
@@ -114,7 +124,7 @@
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label>Cardholder Name <span class="red">*</span></label>
-                                    <input type="text" class="form-control" name="cardholder_name" id="cardholder_name">
+                                    <input type="text" class="form-control" name="cardholder_name" id="cardholder_name" value="{{ persist.cardholder_name }}">
                                     <label for="cardholder_name" class="invalid-feedback error"></label>
                                 </div>
 
@@ -126,7 +136,7 @@
 
                                 <div class="col-md-12 mb-3">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" name="terms_accepted" id="terms_accepted">
+                                        <input type="checkbox" class="custom-control-input" name="terms_accepted" id="terms_accepted" {{ persist.terms_accepted == true ? 'checked' : '' }}>
                                         <label for="terms_accepted" class="custom-control-label terms-text">I agree that I have read the <a href="">Terms and Conditions</a></label>
                                         <label for="terms_accepted" class="invalid-feedback error"></label>
                                     </div>
@@ -134,7 +144,7 @@
                                     <hr>
 
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" name="gdpr" id="gdpr">
+                                        <input type="checkbox" class="custom-control-input" name="gdpr" id="gdpr" {{ persist.gdpr == true ? 'checked' : '' }}>
                                         <label for="gdpr" class="custom-control-label terms-text">I agree to receive product emails in conjuction with our <a href="">Privacy Policy</a></label>
                                         <label for="gdpr" class="invalid-feedback error"></label>
                                     </div>
@@ -191,6 +201,10 @@
 
 {% block scripts_forms %}
     {% include 'pages/web/_includes/_files/scripts/payment-form.php' %}
+{% endblock %}
+
+{% block scripts_number_verify %}
+    {% include 'pages/web/_includes/_files/scripts/number-verify.php' %}
 {% endblock %}
 
 {% block scripts_stripe %}
