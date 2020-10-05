@@ -1,6 +1,19 @@
 <?php
 
 return [
+    'mailchimp' => [
+        'api' => getenv('MAILCHIMP_API'),
+        'list' => [
+            'server' => getenv('MAILCHIMP_LIST_SERVER'),
+            'name' => getenv('MAILCHIMP_LIST_NAME')
+        ],
+        'gdpr' => [
+            'email' => getenv('MAILCHIMP_GDRP_EMAIL'),
+            'direct' => getenv('MAILCHIMP_GDRP_DIRECT'),
+            'ads' => getenv('MAILCHIMP_GDRP_ADS')
+        ],
+        'count' => getenv('MAILCHIMP_COUNT', 10000)
+    ],
 
     'mail' => [
         'host' => getenv('MAIL_HOST'),
@@ -46,20 +59,6 @@ return [
         'secret' => getenv('STRIPE_SECRET'),
         'public' => getenv('STRIPE_PUBLIC'),
         'currency' => getenv('STRIPE_CURRENCY', 'GBP')
-    ],
-
-    'mailchimp' => [
-        'api' => getenv('MAILCHIMP_API'),
-        'list' => [
-            'server' => getenv('MAILCHIMP_LIST_SERVER'),
-            'name' => getenv('MAILCHIMP_LIST_NAME')
-        ],
-        'gdpr' => [
-            'email' => getenv('MAILCHIMP_GDRP_EMAIL'),
-            'direct' => getenv('MAILCHIMP_GDRP_DIRECT'),
-            'ads' => getenv('MAILCHIMP_GDRP_ADS')
-        ],
-        'count' => getenv('MAILCHIMP_COUNT', 10000)
     ]
 
 ];
