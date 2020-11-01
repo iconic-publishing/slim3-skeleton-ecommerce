@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Services\MailingList;
+namespace Base\Services\GDPR;
 
 use MailchimpMarketing\ApiClient;
 use Base\Constructor\BaseConstructor;
