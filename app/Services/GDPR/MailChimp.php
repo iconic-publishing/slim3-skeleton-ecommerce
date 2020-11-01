@@ -2,27 +2,28 @@
 
 namespace Base\Services\MailingList;
 
-use Base\Helpers\Filter;
+use MailchimpMarketing\ApiClient;
 use Base\Constructor\BaseConstructor;
 
 class MailChimp extends BaseConstructor {
-	
-    public function subscribe($email, $firstname, $status) {
-        $apikey = $this->config->get('mailchimp.api');
-        $auth = base64_encode('user:' . $apikey);
 
-        $data = [
-            'apikey' => $apikey,
-            'email_address' => $email,
+    public function subscribe($email, $status, $firstname, $ip) {
+        $client = new ApiClient();
+        $client->setConfig([
+            'apiKey' => $this->config->get('mailchimp.api'),
+            'server' => $this->config->get('mailchimp.server'),
+        ]);
+
+        $response = $client->lists->addListMember($this->config->get('mailchimp.list'), [
+            "email_address" => $email,
+            "status" => $status,
             'email_type' => 'html',
-            'status' => $status,
             'merge_fields' => [
                 'FNAME' => $firstname
             ],
-            'ip_opt' => Filter::ip(),
-            'timestamp_opt' => date('Y-m-d H:i:s'),
+            'language' => 'English',
             'vip' => true,
-            'marketing_permissions' => [ // GDPR Complient as of May 2018
+            'marketing_permissions' => [
                 0 => [
                     'marketing_permission_id' => $this->config->get('mailchimp.gdpr.email'),
                     'text' => 'Email',
@@ -38,26 +39,12 @@ class MailChimp extends BaseConstructor {
                     'text' => 'Customized Online Advertising',
                     'enabled' => true
                 ]
-            ]
-        ];
-
-        $json = json_encode($data);
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->config->get('mailchimp.list.server') . $this->config->get('mailchimp.list.name') . md5(strtolower($email)));
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json', 
-            'Authorization: Basic ' . $auth
+            ],
+            'ip_opt' => $ip,
+            'timestamp_opt' => date('Y-m-d H:i:s')
         ]);
-        curl_setopt($curl, CURLOPT_USERAGENT, 'PHP-MCAPI/3.0');
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, ($status == 'unsubscribed') ? 'PATCH' : 'PUT');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 
-        return curl_exec($curl);
+        return $response;
     }
 	
 }

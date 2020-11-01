@@ -3,10 +3,8 @@
 return [
     'mailchimp' => [
         'api' => getenv('MAILCHIMP_API'),
-        'list' => [
-            'server' => getenv('MAILCHIMP_LIST_SERVER'),
-            'name' => getenv('MAILCHIMP_LIST_NAME')
-        ],
+        'server' => getenv('MAILCHIMP_SERVER'),
+        'list' => getenv('MAILCHIMP_LIST_ID'),
         'gdpr' => [
             'email' => getenv('MAILCHIMP_GDRP_EMAIL'),
             'direct' => getenv('MAILCHIMP_GDRP_DIRECT'),
