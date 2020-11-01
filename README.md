@@ -1,1 +1,1 @@
-# A skeleton starter structure for Slim 3 with Twig views
+# Slim 3 e-Commerce Skeleton
