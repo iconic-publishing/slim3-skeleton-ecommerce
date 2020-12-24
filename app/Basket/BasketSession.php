@@ -93,7 +93,7 @@ class BasketSession {
     }
 	
 	public function shipping() {		
-		$shipping = 0;
+		$shipping = getenv('STRIPE_SHIPPING');
 
 		return $shipping;
 	}
