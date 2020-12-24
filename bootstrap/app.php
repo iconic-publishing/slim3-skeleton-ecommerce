@@ -20,6 +20,7 @@ use Base\Models\Product\Product;
 use Base\Storage\SessionStorage;
 use Base\Services\GDPR\MailChimp;
 use Base\Services\PHPMailer\Email;
+use Base\ErrorHandlers\ErrorHandler;
 use Illuminate\Pagination\Paginator;
 use Base\Services\Mail\Mailer\Mailer;
 use Base\Middleware\OfflineMiddleware;
