@@ -16,6 +16,7 @@
 	</head>
 
 	<body oncontextmenu="{{ config.app.onContextMenu }}">
+		{% set token = token.get() %}
 		
 		{% block content %}{% endblock %}
 		

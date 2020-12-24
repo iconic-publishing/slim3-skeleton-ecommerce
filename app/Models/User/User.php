@@ -19,17 +19,18 @@ class User extends Model {
     protected $table = 'users';
 
     protected $fillable = [
-        'username',
-        'email_address',
-        'email_address_verified',
-        'password',
-        'token',
-        'active',
-        'locked',
-        'active_hash',
-        'recover_hash',
-        'register_ip',
-        'login_ip',
+		'username',
+		'email_address',
+		'email_address_verified',
+		'password',
+		'hash',
+		'token',
+		'active',
+		'locked',
+		'active_hash',
+		'recover_hash',
+		'register_ip',
+		'login_ip',
 		'login_time',
 		'last_login_time'
     ];
@@ -69,14 +70,15 @@ class User extends Model {
 		]);
 	}
 	
-	public function createLoginToken($token) {
+	public function createLoginToken($hash, $token) {
 		$this->update([
+			'hash' => $hash,
 			'token' => $token
 		]);
 	}
 	
 	public function removeLoginToken() {
-		$this->createLoginToken(null);
+		$this->createLoginToken(null, null);
 	}
 	
 	public function createLoginIp($ip) {

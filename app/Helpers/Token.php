@@ -8,7 +8,7 @@ use Base\Constructor\BaseConstructor;
 class Token extends BaseConstructor {
 
     public function get() {
-        return User::select('token')->where('id', $this->auth->user()->id)->first();
+        return User::select('hash', 'token')->where('id', $this->auth->user()->id)->first();
     }
 
 }

@@ -6,17 +6,20 @@ use Base\Constructor\BaseConstructor;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AuthMiddleware extends BaseConstructor {
+class AuthenticatedTokenMiddleware extends BaseConstructor {
 	
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Callable $next) {
-        if(!$this->auth->check()) {
-            $this->flash->addMessage('warning', $this->config->get('messages.auth.error'));
+        if(!$this->auth->user()) {
             return $response->withRedirect($this->router->pathFor('getLogin'));
         }
 
-        $token = $request->getAttribute('routeInfo')[2]['token'];
+        $route = $request->getAttribute('route');
+        $arguments = $route->getArguments();
+        $hash = $arguments['hash'];
+        $token = $arguments['token'];
+        $check = $hash . '_' . $token;
 
-        if(!$this->hash->hashCheck($this->auth->user()->token, $token)) {
+        if(!$this->hash->hashCheck($this->auth->user()->hash . '_' . $this->auth->user()->token, $check)) {
             $this->auth->user()->removeLoginToken();
             $this->auth->user()->removeLoginIp();
             $this->auth->user()->removeLoginTime();

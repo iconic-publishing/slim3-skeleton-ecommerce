@@ -1,8 +1,9 @@
 <?php
 
-use Base\Middleware\AuthMiddleware;
+use Base\Middleware\AuthenticatedMiddleware;
+use Base\Middleware\AuthenticatedTokenMiddleware;
 use Base\Controllers\Admin\Dashboard\AdminController;
 
-$app->group('/admin/{token}', function() {
-    $this->get('/dashboard', AdminController::class . ':admin')->setName('admin');
-})->add(new AuthMiddleware($container));
+$app->group('/{hash}_{token}', function($route) {
+    $route->get('/admin/dashboard', AdminController::class . ':getAdmin')->setName('getAdmin');
+})->add(new AuthenticatedMiddleware($container))->add(new AuthenticatedTokenMiddleware($container));

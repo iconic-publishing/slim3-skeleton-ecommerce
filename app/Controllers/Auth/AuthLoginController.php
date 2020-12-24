@@ -54,17 +54,20 @@ class AuthLoginController extends BaseConstructor {
             if($user && $this->hash->passwordCheck($password, $user->password)) {
                 Session::put('user', $user->id);
 
-                $size = $this->config->get('auth.token');
-                $token = $this->hash->hashed($size);
+                $auth_hash = $this->config->get('auth.hash');
+                $auth_token = $this->config->get('auth.token');
+                $hash = $this->hash->hashed($auth_hash);
+                $token = $this->hash->hashed($auth_token);
+                $ip = Filter::ip();
 
-                $user->createLoginToken($token);
+                $user->createLoginToken($hash, $token);
                 $user->createLoginIp($ip);
                 $user->createLoginTime();
 
                 if($this->permission->administratorGroup() || $this->permission->adminGroup()) {
-                    return $response->withRedirect($this->router->pathFor('admin', compact('token')));
+                    return $response->withRedirect($this->router->pathFor('getAdmin', compact('hash', 'token')));
                 } else {
-                    return $response->withRedirect($this->router->pathFor('member', compact('token')));
+                    return $response->withRedirect($this->router->pathFor('getMember', compact('hash', 'token')));
                 }
             } else {
                 $this->flash->addMessage('warning', $this->config->get('messages.login.notActive'));

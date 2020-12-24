@@ -12,6 +12,7 @@ class Users extends Migration {
             $table->string('email_address', 255);
             $table->string('email_address_verified', 255)->nullable();
             $table->string('password', 255)->nullable();
+            $table->string('hash', 255)->nullable();
             $table->string('token', 255)->nullable();
             $table->boolean('active');
             $table->boolean('locked');

@@ -125,8 +125,8 @@ class OrderInvoice extends FPDF {
 		$this->SetTextColor(0, 0, 0);
 	}
 	
-	public function addLogo() {
-		$this->Image(__DIR__ . getenv('INVOICE_LOGO_PATH'), 10, 6, 80);
+	public function addLogo($path) {
+		$this->Image($path, 10, 6, 80);
 		$this->Ln(20);
 	}
 	

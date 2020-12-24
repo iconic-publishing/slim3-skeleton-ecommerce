@@ -14,7 +14,7 @@ class CreateInvoice implements HandlerInterface {
 		
         $pdf = new OrderInvoice('P', 'mm', 'A4');
 		$pdf->AddPage();
-		$pdf->addLogo();
+		$pdf->addLogo(__DIR__ . getenv('INVOICE_LOGO_PATH'));
 		$pdf->addInvoiceNumber('INVOICE ', $order->order_id);
 		$pdf->addWatermarkPaid('**Invoice Paid**');
 		$pdf->addCurrency($currency);

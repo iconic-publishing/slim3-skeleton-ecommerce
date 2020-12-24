@@ -1,8 +1,9 @@
 <?php
 
-use Base\Middleware\AuthMiddleware;
+use Base\Middleware\AuthenticatedMiddleware;
+use Base\Middleware\AuthenticatedTokenMiddleware;
 use Base\Controllers\Member\Dashboard\MemberController;
 
-$app->group('/member/{token}', function() {
-    $this->get('/dashboard', MemberController::class . ':member')->setName('member');
-})->add(new AuthMiddleware($container));
+$app->group('/{hash}_{token}', function() {
+    $this->get('/member/dashboard', MemberController::class . ':member')->setName('member');
+})->add(new AuthenticatedMiddleware($container))->add(new AuthenticatedTokenMiddleware($container));
