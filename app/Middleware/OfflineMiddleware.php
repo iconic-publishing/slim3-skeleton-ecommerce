@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class OfflineMiddleware extends BaseConstructor {
 	
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Callable $next) {
-        $offline = getenv('OFFLINE') === 'true' ? true : false;
+        $offline = getenv('OFFLINE') === 'true' ?: false;
 
         if($offline) {
             $response = $response->withStatus(503)->withHeader('Retry-After', 3600);
